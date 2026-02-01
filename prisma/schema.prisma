@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String          @id @default(uuid())
+  email        String          @unique
+  password     String
+  kobanBalance Int             @default(0)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  odomo        Odomo?
+  inventory    InventoryItem[]
+}
+
+model Odomo {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String    @default("Odomo")
+  level             Int       @default(1)
+  xp                Int       @default(0)
+  stage             Stage     @default(TAMAGO)
+  evolutionVariant  String?
+  hunger            Float     @default(100)
+  happiness         Float     @default(100)
+  hygiene           Float     @default(100)
+  lifeState         LifeState @default(ALIVE)
+  birthDate         DateTime  @default(now())
+  lastInteractionAt DateTime  @default(now()) // Pour la règle des 16h
+  lastStepSyncAt    DateTime  @default(now()) // Pour le podomètre
+}
+
+model InventoryItem {
+  id       String   @id @default(uuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  itemType ItemType
+  quantity Int      @default(1)
+
+  @@unique([userId, itemType])
+}
+
+enum Stage {
+  TAMAGO
+  CHIBI
+  GENIN
+  CHUNIN
+  JONIN
+  KAGE
+}
+
+enum LifeState {
+  ALIVE
+  SICK
+  DEAD
+}
+
+enum ItemType {
+  ONIGIRI
+  RAMEN
+  BENTO_ROYAL
+  SOAP
+  MEDICINE
+  SOUL_STONE
+}

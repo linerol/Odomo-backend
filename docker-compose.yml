@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: odomo-db
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: odomo_admin
+      POSTGRES_PASSWORD: odomo_password
+      POSTGRES_DB: odomo_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
