@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-import type { User } from '../../generated/prisma/index.js';
+import type { User } from '@prisma/client';
 import * as argon2 from 'argon2';
 
 @Injectable()

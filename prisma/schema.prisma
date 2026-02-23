@@ -10,14 +10,15 @@ datasource db {
 }
 
 model User {
-  id           String          @id @default(uuid())
-  email        String          @unique
-  password     String
-  kobanBalance Int             @default(0)
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  odomo        Odomo?
-  inventory    InventoryItem[]
+  id                String          @id @default(uuid())
+  email             String          @unique
+  password          String
+  kobanBalance      Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  odomo             Odomo?
+  inventory         InventoryItem[]
+  hasSeenOnboarding Boolean         @default(false)
 }
 
 model Odomo {

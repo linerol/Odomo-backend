@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { OdomoService } from '../odomo/odomo.service.js';
 import { BuyItemDto } from './dto/buy-item.dto.js';
 import { UseItemDto } from './dto/use-item.dto.js';
-import type { ItemType, InventoryItem } from '../../generated/prisma/index.js';
+import type { ItemType, InventoryItem } from '@prisma/client';
 
 // Prix des objets en Kobans
 const ITEM_PRICES: Record<ItemType, number> = {

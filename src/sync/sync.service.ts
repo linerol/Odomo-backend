@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { OdomoService } from '../odomo/odomo.service.js';
 import { SyncStepsDto } from './dto/sync-steps.dto.js';
 import { SyncResponseDto } from './dto/sync-response.dto.js';
-import type { Stage } from '../../generated/prisma/index.js';
+import type { Stage } from '@prisma/client';
 
 // Constantes de conversion
 const XP_PER_STEP = 0.1; // 1 XP pour 10 pas

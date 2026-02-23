@@ -3,12 +3,19 @@ import { OdomoService } from './odomo.service.js';
 import { CreateOdomoDto } from './dto/create-odomo.dto.js';
 import { InteractDto } from './dto/interact.dto.js';
 import { GetUser } from '../common/decorators/get-user.decorator.js';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { OdomoStatsDto } from './dto/odomo-stats.dto.js';
 
+@ApiTags('Odomo')
+@ApiBearerAuth()
 @Controller('odomo')
 export class OdomoController {
   constructor(private readonly odomoService: OdomoService) { }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new Odomo (Birth)' })
+  @ApiResponse({ status: 201, description: 'Odomo created successfully.' })
+  @ApiResponse({ status: 409, description: 'User already has an Odomo.' })
   async create(
     @GetUser('id') userId: string,
     @Body() createOdomoDto: CreateOdomoDto,
@@ -17,11 +24,17 @@ export class OdomoController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get current Odomo live stats' })
+  @ApiResponse({ status: 200, description: 'Return Odomo stats.', type: OdomoStatsDto })
+  @ApiResponse({ status: 404, description: 'Odomo not found.' })
   async getStats(@GetUser('id') userId: string) {
     return this.odomoService.getLiveStats(userId);
   }
 
   @Post('interact')
+  @ApiOperation({ summary: 'Interact with Odomo (Feed, Clean, Heal)' })
+  @ApiResponse({ status: 200, description: 'Interaction successful, returns updated stats.', type: OdomoStatsDto })
+  @ApiResponse({ status: 400, description: 'Invalid interaction or dead Odomo.' })
   async interact(
     @GetUser('id') userId: string,
     @Body() interactDto: InteractDto,
@@ -30,6 +43,9 @@ export class OdomoController {
   }
 
   @Post('xp')
+  @ApiOperation({ summary: 'Dev: Add XP manually' })
+  @ApiBody({ schema: { type: 'object', properties: { amount: { type: 'number' } } } })
+  @ApiResponse({ status: 200, description: 'XP added.', type: OdomoStatsDto })
   async addXp(
     @GetUser('id') userId: string,
     @Body('amount') amount: number,
@@ -38,6 +54,8 @@ export class OdomoController {
   }
 
   @Delete()
+  @ApiOperation({ summary: 'Delete Odomo' })
+  @ApiResponse({ status: 200, description: 'Odomo deleted.' })
   async delete(@GetUser('id') userId: string) {
     await this.odomoService.delete(userId);
     return { message: 'Odomo deleted successfully' };

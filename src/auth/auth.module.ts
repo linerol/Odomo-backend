@@ -13,7 +13,7 @@ import { JwtStrategy } from './strategies/jwt.strategy.js';
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'super-secret-key-change-in-production',
       signOptions: {
-        expiresIn: '1s', // Token expire après 7 jours
+        expiresIn: '7d', // Token expire après 7 jours
       },
     }),
   ],

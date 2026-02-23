@@ -11,6 +11,25 @@ services:
       POSTGRES_DB: odomo_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U odomo_admin -d odomo_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    container_name: odomo-backend
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://odomo_admin:odomo_password@db:5432/odomo_db
+      JWT_SECRET: ${JWT_SECRET:-super-secret-key-change-in-production}
+      PORT: 3000
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   postgres_data:

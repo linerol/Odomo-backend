@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateOdomoDto } from './dto/create-odomo.dto.js';
 import { InteractDto, InteractionType } from './dto/interact.dto.js';
 import { OdomoStatsDto } from './dto/odomo-stats.dto.js';
-import type { Odomo, Stage, LifeState } from '../../generated/prisma/index.js';
+import type { Odomo, Stage, LifeState } from '@prisma/client';
 
 // Constantes du jeu
 const DECAY_RATES = {
@@ -100,6 +100,7 @@ export class OdomoService {
       name: odomo.name,
       level: odomo.level,
       xp: odomo.xp,
+      maxXp: getXpRequiredForLevel(odomo.level),
       stage: odomo.stage,
       evolutionVariant: odomo.evolutionVariant,
       hunger: Math.round(liveHunger * 10) / 10,
