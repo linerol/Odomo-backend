@@ -11,6 +11,13 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagg
 export class InventoryController {
   constructor(private readonly inventoryService: InventoryService) { }
 
+  @Get('shop')
+  @ApiOperation({ summary: 'Get shop items catalog' })
+  @ApiResponse({ status: 200, description: 'Return all available shop items with prices and effects.' })
+  getShopItems() {
+    return this.inventoryService.getShopItems();
+  }
+
   @Get()
   @ApiOperation({ summary: 'Get user inventory' })
   @ApiResponse({ status: 200, description: 'Return user inventory.' })

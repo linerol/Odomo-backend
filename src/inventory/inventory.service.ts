@@ -29,7 +29,7 @@ const ITEM_EFFECTS: Record<ItemType, ItemEffect> = {
   // Nourriture
   ONIGIRI: { hunger: 20 },
   RAMEN: { hunger: 40, happiness: 10 },
-  BENTO_ROYAL: { hunger: 100, happiness: 20 },
+  BENTO_ROYAL: { hunger: 100, happiness: 40 },
 
   // Hygiène
   SOAP: { hygiene: 50, happiness: 5 },
@@ -39,6 +39,26 @@ const ITEM_EFFECTS: Record<ItemType, ItemEffect> = {
 
   // Résurrection
   SOUL_STONE: { resurrect: true },
+};
+
+// Descriptions des objets
+const ITEM_DESCRIPTIONS: Record<ItemType, string> = {
+  ONIGIRI: 'A simple rice ball. Restores a bit of hunger.',
+  RAMEN: 'A warm bowl of ramen. Fills the belly and lifts the spirit.',
+  BENTO_ROYAL: 'A premium bento box. Fully restores hunger and greatly boosts happiness.',
+  SOAP: 'Gentle soap for a fresh bath. Restores hygiene.',
+  MEDICINE: 'Cures sickness and cheers up your Odomo.',
+  SOUL_STONE: 'A mystical stone that can bring back a fallen Odomo.',
+};
+
+// Catégories des objets
+const ITEM_CATEGORIES: Record<ItemType, string> = {
+  ONIGIRI: 'food',
+  RAMEN: 'food',
+  BENTO_ROYAL: 'food',
+  SOAP: 'hygiene',
+  MEDICINE: 'care',
+  SOUL_STONE: 'special',
 };
 
 @Injectable()
@@ -54,6 +74,17 @@ export class InventoryService {
       where: { userId },
       orderBy: { itemType: 'asc' },
     });
+  }
+
+  getShopItems() {
+    const itemTypes = Object.keys(ITEM_PRICES) as ItemType[];
+    return itemTypes.map((itemType) => ({
+      itemType,
+      price: ITEM_PRICES[itemType],
+      effects: ITEM_EFFECTS[itemType],
+      description: ITEM_DESCRIPTIONS[itemType],
+      category: ITEM_CATEGORIES[itemType],
+    }));
   }
 
   async buyItem(userId: string, buyItemDto: BuyItemDto) {
