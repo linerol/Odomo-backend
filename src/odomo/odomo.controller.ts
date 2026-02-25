@@ -53,6 +53,14 @@ export class OdomoController {
     return this.odomoService.addExperience(userId, amount);
   }
 
+  @Post('reset')
+  @ApiOperation({ summary: 'Dev: Reset account (Odomo to birth state, Kobans to 0, clear inventory)' })
+  @ApiResponse({ status: 200, description: 'Account reset successfully.', type: OdomoStatsDto })
+  @ApiResponse({ status: 404, description: 'Odomo not found.' })
+  async resetAccount(@GetUser('id') userId: string) {
+    return this.odomoService.resetAccount(userId);
+  }
+
   @Delete()
   @ApiOperation({ summary: 'Delete Odomo' })
   @ApiResponse({ status: 200, description: 'Odomo deleted.' })

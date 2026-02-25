@@ -9,6 +9,10 @@ import type { Stage } from '@prisma/client';
 const XP_PER_STEP = 0.1; // 1 XP pour 10 pas
 const KOBANS_PER_100_STEPS = 1; // 1 Koban pour 100 pas
 
+// 🛡️ Anti-triche
+const MAX_STEPS_PER_SYNC = 50_000; // Plafond absolu par appel
+const MAX_STEPS_PER_MINUTE = 180;  // ~3 pas/seconde = marche rapide/course
+
 // Fonction pour calculer l'XP requis pour passer au niveau suivant
 const getXpRequiredForLevel = (level: number): number => {
   return Math.floor(100 * Math.pow(level, 1.5));
@@ -47,6 +51,13 @@ export class SyncService {
       throw new BadRequestException('Cannot sync 0 steps');
     }
 
+    // 🛡️ Anti-triche : plafond absolu par appel
+    if (steps > MAX_STEPS_PER_SYNC) {
+      throw new BadRequestException(
+        `Cannot sync more than ${MAX_STEPS_PER_SYNC} steps at once`,
+      );
+    }
+
     // Calculer les gains
     const xpGained = Math.floor(steps * XP_PER_STEP);
     const kobansGained = Math.floor(steps / 100) * KOBANS_PER_100_STEPS;
@@ -58,6 +69,18 @@ export class SyncService {
 
     if (!odomo) {
       throw new NotFoundException('Odomo not found. Create one first.');
+    }
+
+    // 🛡️ Anti-triche : vérifier la plausibilité (delta temps vs pas)
+    const now = new Date();
+    const lastSync = new Date(odomo.lastStepSyncAt);
+    const elapsedMinutes = Math.max(1, (now.getTime() - lastSync.getTime()) / (1000 * 60));
+    const maxPlausibleSteps = Math.floor(elapsedMinutes * MAX_STEPS_PER_MINUTE);
+
+    if (steps > maxPlausibleSteps) {
+      throw new BadRequestException(
+        `Too many steps for elapsed time. Max plausible: ${maxPlausibleSteps} steps in ${Math.round(elapsedMinutes)} minutes`,
+      );
     }
 
     const user = await this.prisma.user.findUnique({

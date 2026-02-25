@@ -235,6 +235,52 @@ export class OdomoService {
     return this.getLiveStats(userId);
   }
 
+  async resetAccount(userId: string): Promise<OdomoStatsDto> {
+    const odomo = await this.prisma.odomo.findUnique({
+      where: { userId },
+    });
+
+    if (!odomo) {
+      throw new NotFoundException('Odomo not found');
+    }
+
+    const now = new Date();
+
+    // 🔒 TRANSACTION ATOMIQUE : tout reset en une seule opération
+    await this.prisma.$transaction([
+      // 1. Reset l'Odomo à son état de naissance (garde le même nom)
+      this.prisma.odomo.update({
+        where: { userId },
+        data: {
+          level: 1,
+          xp: 0,
+          stage: 'TAMAGO',
+          evolutionVariant: null,
+          hunger: 100,
+          happiness: 100,
+          hygiene: 100,
+          lifeState: 'ALIVE',
+          birthDate: now,
+          lastInteractionAt: now,
+          lastStepSyncAt: now,
+        },
+      }),
+
+      // 2. Reset les Kobans à 0
+      this.prisma.user.update({
+        where: { id: userId },
+        data: { kobanBalance: 0 },
+      }),
+
+      // 3. Supprimer tout l'inventaire
+      this.prisma.inventoryItem.deleteMany({
+        where: { userId },
+      }),
+    ]);
+
+    return this.getLiveStats(userId);
+  }
+
   async delete(userId: string): Promise<void> {
     const odomo = await this.prisma.odomo.findUnique({
       where: { userId },

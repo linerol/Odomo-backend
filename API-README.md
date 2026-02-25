@@ -342,6 +342,57 @@ Delete a user by ID.
 ### 🎒 Inventory
 Item and inventory management endpoints for the logged-in user.
 
+#### `GET /inventory/shop` *(Auth Required)*
+Get the full shop catalog with all available items, prices, effects, descriptions, and categories.
+- **Responses:**
+  - `200 OK`: Returns an array of shop items.
+  ```json
+  [
+    {
+      "itemType": "ONIGIRI",
+      "price": 10,
+      "effects": { "hunger": 20 },
+      "description": "A simple rice ball. Restores a bit of hunger.",
+      "category": "food"
+    },
+    {
+      "itemType": "RAMEN",
+      "price": 25,
+      "effects": { "hunger": 40, "happiness": 10 },
+      "description": "A warm bowl of ramen. Fills the belly and lifts the spirit.",
+      "category": "food"
+    },
+    {
+      "itemType": "BENTO_ROYAL",
+      "price": 50,
+      "effects": { "hunger": 100, "happiness": 40 },
+      "description": "A premium bento box. Fully restores hunger and greatly boosts happiness.",
+      "category": "food"
+    },
+    {
+      "itemType": "SOAP",
+      "price": 15,
+      "effects": { "hygiene": 50, "happiness": 5 },
+      "description": "Gentle soap for a fresh bath. Restores hygiene.",
+      "category": "hygiene"
+    },
+    {
+      "itemType": "MEDICINE",
+      "price": 40,
+      "effects": { "heal": true, "happiness": 15 },
+      "description": "Cures sickness and cheers up your Odomo.",
+      "category": "care"
+    },
+    {
+      "itemType": "SOUL_STONE",
+      "price": 200,
+      "effects": { "resurrect": true },
+      "description": "A mystical stone that can bring back a fallen Odomo.",
+      "category": "special"
+    }
+  ]
+  ```
+
 #### `GET /inventory` *(Auth Required)*
 Get the current user's inventory details (list of items possessed).
 - **Responses:**
@@ -428,6 +479,12 @@ Interact with the Odomo to affect its stats. Valid interactions include Feeding,
 - **Responses:**
   - `200 OK`: XP added successfully. Returns the updated `OdomoStatsDto`.
 
+#### `POST /odomo/reset` *(Auth Required)*
+**(Dev Tool):** Reset the current user's account to its initial state. The Odomo is kept but reverted to birth state (level 1, 0 XP, TAMAGO stage, all stats at 100, ALIVE). The user's Koban balance is reset to 0 and all inventory items are deleted.
+- **Responses:**
+  - `200 OK`: Account reset successfully. Returns the fresh `OdomoStatsDto`.
+  - `404 Not Found`: Odomo not found.
+
 #### `DELETE /odomo` *(Auth Required)*
 Delete (remove/reset) the current user's Odomo.
 - **Responses:**
@@ -447,7 +504,10 @@ Synchronize device pedometer steps to gain XP for your Odomo and Kobans for your
   }
   ```
   - `steps`: Required integer. Cannot be negative. Represents the amount of steps taken.
+- **Anti-Cheat Rules:**
+  - **Hard cap**: Maximum `50,000` steps per single sync call.
+  - **Plausibility check**: The number of steps is validated against the elapsed time since the last sync. A maximum of `180 steps/minute` (~3 steps/second, equivalent to running pace) is allowed. For example, if 10 minutes have passed since the last sync, at most `1,800` steps can be synced.
 - **Responses:**
   - `201 Created`: Steps synced successfully. The response contains the amount of XP/Kobans gained and the new Odomo stats. Returns `SyncResponseDto`.
-  - `400 Bad Request`: Invalid steps payload (e.g. negative number) or the Odomo is dead and cannot receive XP.
+  - `400 Bad Request`: Invalid steps payload (e.g. negative number, exceeds 50,000 cap, exceeds plausible steps for elapsed time) or the Odomo is dead and cannot receive XP.
   - `404 Not Found`: User does not currently own an Odomo.
