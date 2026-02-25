@@ -53,6 +53,17 @@ export class OdomoController {
     return this.odomoService.addExperience(userId, amount);
   }
 
+  @Post('kobans')
+  @ApiOperation({ summary: 'Dev: Add Kobans manually' })
+  @ApiBody({ schema: { type: 'object', properties: { amount: { type: 'number' } } } })
+  @ApiResponse({ status: 200, description: 'Kobans added.' })
+  async addKobans(
+    @GetUser('id') userId: string,
+    @Body('amount') amount: number,
+  ) {
+    return this.odomoService.addKobans(userId, amount);
+  }
+
   @Post('reset')
   @ApiOperation({ summary: 'Dev: Reset account (Odomo to birth state, Kobans to 0, clear inventory)' })
   @ApiResponse({ status: 200, description: 'Account reset successfully.', type: OdomoStatsDto })

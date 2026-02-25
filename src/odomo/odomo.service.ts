@@ -281,6 +281,25 @@ export class OdomoService {
     return this.getLiveStats(userId);
   }
 
+  async addKobans(userId: string, amount: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        kobanBalance: user.kobanBalance + amount,
+      },
+    });
+
+    return { success: true, newBalance: user.kobanBalance + amount };
+  }
+
   async delete(userId: string): Promise<void> {
     const odomo = await this.prisma.odomo.findUnique({
       where: { userId },
