@@ -19,6 +19,18 @@ model User {
   odomo             Odomo?
   inventory         InventoryItem[]
   hasSeenOnboarding Boolean         @default(false)
+  stepGoal          Int             @default(10000)
+  dailyStepLogs     DailyStepLog[]
+}
+
+model DailyStepLog {
+  id     String   @id @default(uuid())
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date   DateTime @db.Date // La date du jour (sans heure), ex: 2026-02-25
+  steps  Int      @default(0)
+
+  @@unique([userId, date]) // Un seul enregistrement par user par jour
 }
 
 model Odomo {

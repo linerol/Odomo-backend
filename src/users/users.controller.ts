@@ -35,7 +35,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Return current user.', type: UserEntity })
   async getProfile(@GetUser('id') userId: string) {
-    const user = await this.usersService.findById(userId);
+    const user = await this.usersService.getUserWithStats(userId);
     return new UserEntity(user);
   }
 
@@ -47,27 +47,19 @@ export class UsersController {
     return users.map(user => new UserEntity(user));
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get user by id' })
-  @ApiResponse({ status: 200, description: 'Return user.', type: UserEntity })
-  async findOne(@Param('id') id: string) {
-    const user = await this.usersService.findById(id);
-    return new UserEntity(user);
-  }
-
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update user' })
+  @Patch('me')
+  @ApiOperation({ summary: 'Update current user' })
   @ApiResponse({ status: 200, description: 'The user has been successfully updated.', type: UserEntity })
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const user = await this.usersService.update(id, updateUserDto);
+  async update(@GetUser('id') userId: string, @Body() updateUserDto: UpdateUserDto) {
+    const user = await this.usersService.update(userId, updateUserDto);
     return new UserEntity(user);
   }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete user' })
+  @Delete('me')
+  @ApiOperation({ summary: 'Delete current user account' })
   @ApiResponse({ status: 200, description: 'The user has been successfully deleted.', type: UserEntity })
-  async remove(@Param('id') id: string) {
-    const user = await this.usersService.remove(id);
+  async remove(@GetUser('id') userId: string) {
+    const user = await this.usersService.remove(userId);
     return new UserEntity(user);
   }
 }

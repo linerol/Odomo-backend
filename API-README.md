@@ -73,7 +73,8 @@ Endpoints that do NOT require authentication are explicitly marked as **Public**
 {
   "email": "user@example.com",     
   "password": "password123",       
-  "hasSeenOnboarding": false       
+  "hasSeenOnboarding": false,
+  "stepGoal": 10000
 }
 ```
 
@@ -83,7 +84,8 @@ All properties are optional (Partial of `CreateUserDto`).
 {
   "email": "new@example.com",     
   "password": "newpassword123",       
-  "hasSeenOnboarding": true       
+  "hasSeenOnboarding": true,
+  "stepGoal": 8000
 }
 ```
 
@@ -133,6 +135,9 @@ All properties are optional (Partial of `CreateUserDto`).
   "id": "123e4567-e89b-12d3-a456-426614174000",
   "email": "user@example.com",
   "kobanBalance": 0,
+  "stepGoal": 10000,
+  "streak": 14,
+  "totalSteps": 245800,
   "createdAt": "2023-11-20T12:00:00.000Z",
   "updatedAt": "2023-11-20T12:00:00.000Z",
   "hasSeenOnboarding": false
@@ -286,12 +291,14 @@ Create a new user manually.
   {
     "email": "user@example.com",     
     "password": "password123",       
-    "hasSeenOnboarding": false       
+    "hasSeenOnboarding": false,
+    "stepGoal": 10000
   }
   ```
   - `email`: Required, must be a valid email.
   - `password`: Required, minimum length 8.
   - `hasSeenOnboarding`: Optional boolean.
+  - `stepGoal`: Optional number (min 1000, max 100000). Default is 10000.
 - **Responses:**
   - `201 Created`: Returns `UserEntity` representing the created user.
   - `400 Bad Request`: Validation errors.
@@ -308,25 +315,18 @@ Get all registered users.
   - `200 OK`: Returns an array of `UserEntity` objects.
   - `401 Unauthorized`: Unauthorized access.
 
-#### `GET /users/:id` *(Auth Required)*
-Get a specific user by ID.
-- **Path Parameters:**
-  - `id`: The UUID of the user.
-- **Responses:**
-  - `200 OK`: Returns the requested `UserEntity`.
-  - `404 Not Found`: User not found in the database.
+ 
 
-#### `PATCH /users/:id` *(Auth Required)*
-Update a user by ID.
-- **Path Parameters:**
-  - `id`: The UUID of the user.
+#### `PATCH /users/me` *(Auth Required)*
+Update the currently logged-in user's profile.
 - **Request Body (Partial `UpdateUserDto`):**
   All fields are optional.
   ```json
   {
     "email": "new@example.com",
     "password": "newpassword123",
-    "hasSeenOnboarding": true
+    "hasSeenOnboarding": true,
+    "stepGoal": 8000
   }
   ```
 - **Responses:**
@@ -334,10 +334,8 @@ Update a user by ID.
   - `400 Bad Request`: Validation error.
   - `404 Not Found`: User not found.
 
-#### `DELETE /users/:id` *(Auth Required)*
-Delete a user by ID.
-- **Path Parameters:**
-  - `id`: The UUID of the user.
+#### `DELETE /users/me` *(Auth Required)*
+Delete the currently logged-in user's account.
 - **Responses:**
   - `200 OK`: The user has been successfully deleted. Returns the deleted `UserEntity`.
   - `404 Not Found`: User not found.

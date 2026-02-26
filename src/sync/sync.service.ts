@@ -120,10 +120,34 @@ export class SyncService {
     const newStage = getStageForLevel(newLevel);
     const newKobanBalance = user.kobanBalance + kobansGained;
 
+    // Identifer la date du jour (UTC)
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
     // 🔒 TRANSACTION ATOMIQUE PRISMA
     // Garantit que TOUT passe ou RIEN ne passe (anti-triche)
     await this.prisma.$transaction([
-      // 1. Mettre à jour les Kobans de l'utilisateur
+      // 1. Enregistrer les pas du jour
+      this.prisma.dailyStepLog.upsert({
+        where: {
+          userId_date: {
+            userId,
+            date: today,
+          },
+        },
+        update: {
+          steps: {
+            increment: steps,
+          },
+        },
+        create: {
+          userId,
+          date: today,
+          steps,
+        },
+      }),
+
+      // 2. Mettre à jour les Kobans de l'utilisateur
       this.prisma.user.update({
         where: { id: userId },
         data: {
@@ -131,7 +155,7 @@ export class SyncService {
         },
       }),
 
-      // 2. Mettre à jour l'Odomo (XP, level, stage, lastStepSyncAt)
+      // 3. Mettre à jour l'Odomo (XP, level, stage, lastStepSyncAt)
       this.prisma.odomo.update({
         where: { userId },
         data: {

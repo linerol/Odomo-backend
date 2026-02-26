@@ -20,6 +20,15 @@ export class UserEntity {
   @ApiProperty({ example: false, description: 'Whether the user has seen the onboarding' })
   hasSeenOnboarding: boolean;
 
+  @ApiProperty({ example: 10000, description: 'The daily step goal of the user' })
+  stepGoal: number;
+
+  @ApiProperty({ example: 14, description: 'Current daily step goal streak', required: false })
+  streak?: number;
+
+  @ApiProperty({ example: 245800, description: 'Total steps accumulated', required: false })
+  totalSteps?: number;
+
   @Exclude()
   password: string;
 

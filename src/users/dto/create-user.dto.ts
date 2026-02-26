@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength, IsBoolean, IsOptional } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsBoolean, IsOptional, IsNumber, Min, Max } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
@@ -15,4 +15,11 @@ export class CreateUserDto {
   @IsBoolean()
   @IsOptional()
   hasSeenOnboarding?: boolean;
+
+  @ApiProperty({ example: 10000, description: 'The daily step goal of the user', required: false })
+  @IsNumber()
+  @Min(1000)
+  @Max(100000)
+  @IsOptional()
+  stepGoal?: number;
 }
