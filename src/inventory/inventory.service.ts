@@ -13,6 +13,11 @@ const ITEM_PRICES: Record<ItemType, number> = {
   SOAP: 15,
   MEDICINE: 40,
   SOUL_STONE: 200,
+  CANDY: 5,
+  PLUSH_TOY: 30,
+  SPONGE: 5,
+  BUBBLE_BATH: 40,
+  ENERGY_DRINK: 15,
 };
 
 // Type pour les effets des objets
@@ -33,9 +38,16 @@ const ITEM_EFFECTS: Record<ItemType, ItemEffect> = {
 
   // Hygiène
   SOAP: { hygiene: 50, happiness: 5 },
+  SPONGE: { hygiene: 20, happiness: 2 },
+  BUBBLE_BATH: { hygiene: 100, happiness: 15 },
+
+  // Bonheur
+  CANDY: { happiness: 15 },
+  PLUSH_TOY: { happiness: 50 },
 
   // Soins
   MEDICINE: { heal: true, happiness: 15 },
+  ENERGY_DRINK: { hunger: 15, happiness: 10, hygiene: 10 },
 
   // Résurrection
   SOUL_STONE: { resurrect: true },
@@ -49,6 +61,11 @@ const ITEM_DESCRIPTIONS: Record<ItemType, string> = {
   SOAP: 'Gentle soap for a fresh bath. Restores hygiene.',
   MEDICINE: 'Cures sickness and cheers up your Odomo.',
   SOUL_STONE: 'A mystical stone that can bring back a fallen Odomo.',
+  CANDY: 'A sweet treat. Gives a small happiness boost.',
+  PLUSH_TOY: 'A cuddly plush toy. Your Odomo loves it!',
+  SPONGE: 'A basic sponge. A quick, cheap scrub.',
+  BUBBLE_BATH: 'A luxurious bubble bath. Full hygiene restore and a mood boost.',
+  ENERGY_DRINK: 'A fizzy energy drink. Small boost to hunger, happiness, and hygiene.',
 };
 
 // Catégories des objets
@@ -57,7 +74,12 @@ const ITEM_CATEGORIES: Record<ItemType, string> = {
   RAMEN: 'food',
   BENTO_ROYAL: 'food',
   SOAP: 'hygiene',
+  SPONGE: 'hygiene',
+  BUBBLE_BATH: 'hygiene',
+  CANDY: 'happiness',
+  PLUSH_TOY: 'happiness',
   MEDICINE: 'care',
+  ENERGY_DRINK: 'care',
   SOUL_STONE: 'special',
 };
 
