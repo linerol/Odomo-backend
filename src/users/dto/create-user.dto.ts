@@ -22,4 +22,9 @@ export class CreateUserDto {
   @Max(100000)
   @IsOptional()
   stepGoal?: number;
+
+  @ApiProperty({ example: 'avatar_1.png', description: 'The avatar chosen by the user', required: false })
+  @IsString()
+  @IsOptional()
+  avatar?: string;
 }

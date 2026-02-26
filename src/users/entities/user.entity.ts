@@ -29,6 +29,9 @@ export class UserEntity {
   @ApiProperty({ example: 245800, description: 'Total steps accumulated', required: false })
   totalSteps?: number;
 
+  @ApiProperty({ example: 'avatar_1.png', description: 'The avatar chosen by the user', required: false, nullable: true })
+  avatar: string | null;
+
   @Exclude()
   password: string;
 

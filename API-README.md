@@ -74,7 +74,8 @@ Endpoints that do NOT require authentication are explicitly marked as **Public**
   "email": "user@example.com",     
   "password": "password123",       
   "hasSeenOnboarding": false,
-  "stepGoal": 10000
+  "stepGoal": 10000,
+  "avatar": "avatar_1.png"
 }
 ```
 
@@ -85,7 +86,8 @@ All properties are optional (Partial of `CreateUserDto`).
   "email": "new@example.com",     
   "password": "newpassword123",       
   "hasSeenOnboarding": true,
-  "stepGoal": 8000
+  "stepGoal": 8000,
+  "avatar": "avatar_2.png"
 }
 ```
 
@@ -138,6 +140,7 @@ All properties are optional (Partial of `CreateUserDto`).
   "stepGoal": 10000,
   "streak": 14,
   "totalSteps": 245800,
+  "avatar": "avatar_1.png",
   "createdAt": "2023-11-20T12:00:00.000Z",
   "updatedAt": "2023-11-20T12:00:00.000Z",
   "hasSeenOnboarding": false
@@ -292,13 +295,15 @@ Create a new user manually.
     "email": "user@example.com",     
     "password": "password123",       
     "hasSeenOnboarding": false,
-    "stepGoal": 10000
+    "stepGoal": 10000,
+    "avatar": "avatar_1.png"
   }
   ```
   - `email`: Required, must be a valid email.
   - `password`: Required, minimum length 8.
   - `hasSeenOnboarding`: Optional boolean.
   - `stepGoal`: Optional number (min 1000, max 100000). Default is 10000.
+  - `avatar`: Optional string representing the chosen avatar.
 - **Responses:**
   - `201 Created`: Returns `UserEntity` representing the created user.
   - `400 Bad Request`: Validation errors.
@@ -326,7 +331,8 @@ Update the currently logged-in user's profile.
     "email": "new@example.com",
     "password": "newpassword123",
     "hasSeenOnboarding": true,
-    "stepGoal": 8000
+    "stepGoal": 8000,
+    "avatar": "avatar_2.png"
   }
   ```
 - **Responses:**
