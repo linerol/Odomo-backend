@@ -79,7 +79,7 @@ const ITEM_CATEGORIES: Record<ItemType, string> = {
   CANDY: 'happiness',
   PLUSH_TOY: 'happiness',
   MEDICINE: 'care',
-  ENERGY_DRINK: 'care',
+  ENERGY_DRINK: 'food',
   SOUL_STONE: 'special',
 };
 

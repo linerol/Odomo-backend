@@ -39,6 +39,11 @@ Endpoints that do NOT require authentication are explicitly marked as **Public**
 - `SOAP`
 - `MEDICINE`
 - `SOUL_STONE`
+- `CANDY`
+- `PLUSH_TOY`
+- `SPONGE`
+- `BUBBLE_BATH`
+- `ENERGY_DRINK`
 
 #### `InteractionType`
 - `FEED`
@@ -377,11 +382,46 @@ Get the full shop catalog with all available items, prices, effects, description
       "category": "hygiene"
     },
     {
+      "itemType": "SPONGE",
+      "price": 5,
+      "effects": { "hygiene": 20, "happiness": 2 },
+      "description": "A basic sponge. A quick, cheap scrub.",
+      "category": "hygiene"
+    },
+    {
+      "itemType": "BUBBLE_BATH",
+      "price": 40,
+      "effects": { "hygiene": 100, "happiness": 15 },
+      "description": "A luxurious bubble bath. Full hygiene restore and a mood boost.",
+      "category": "hygiene"
+    },
+    {
+      "itemType": "CANDY",
+      "price": 5,
+      "effects": { "happiness": 15 },
+      "description": "A sweet treat. Gives a small happiness boost.",
+      "category": "happiness"
+    },
+    {
+      "itemType": "PLUSH_TOY",
+      "price": 30,
+      "effects": { "happiness": 50 },
+      "description": "A cuddly plush toy. Your Odomo loves it!",
+      "category": "happiness"
+    },
+    {
       "itemType": "MEDICINE",
       "price": 40,
       "effects": { "heal": true, "happiness": 15 },
       "description": "Cures sickness and cheers up your Odomo.",
       "category": "care"
+    },
+    {
+      "itemType": "ENERGY_DRINK",
+      "price": 15,
+      "effects": { "hunger": 15, "happiness": 10, "hygiene": 10 },
+      "description": "A fizzy energy drink. Small boost to hunger, happiness, and hygiene.",
+      "category": "food"
     },
     {
       "itemType": "SOUL_STONE",
@@ -478,6 +518,35 @@ Interact with the Odomo to affect its stats. Valid interactions include Feeding,
   - `amount`: Required number of XP to add.
 - **Responses:**
   - `200 OK`: XP added successfully. Returns the updated `OdomoStatsDto`.
+
+#### `POST /odomo/kobans` *(Auth Required)*
+**(Dev Tool):** Manually add Kobans to the current user's balance.
+- **Request Body:**
+  ```json
+  {
+    "amount": 500 
+  }
+  ```
+  - `amount`: Required number of Kobans to add.
+- **Responses:**
+  - `200 OK`: Kobans added successfully. Returns `{ "success": true, "newBalance": 500 }`.
+
+#### `POST /odomo/stats/set` *(Auth Required)*
+**(Dev Tool):** Explicitly set the Odomo's `hunger`, `happiness`, and/or `hygiene` to specific values. Setting any stat > 0 will revive a dead Odomo.
+- **Request Body:**
+  ```json
+  {
+    "hunger": 100,
+    "happiness": 50,
+    "hygiene": 0
+  }
+  ```
+  - `hunger`: Optional number (0-100).
+  - `happiness`: Optional number (0-100).
+  - `hygiene`: Optional number (0-100).
+- **Responses:**
+  - `200 OK`: Stats updated successfully. Returns the freshly calculated `OdomoStatsDto`.
+  - `404 Not Found`: Odomo not found.
 
 #### `POST /odomo/reset` *(Auth Required)*
 **(Dev Tool):** Reset the current user's account to its initial state. The Odomo is kept but reverted to birth state (level 1, 0 XP, TAMAGO stage, all stats at 100, ALIVE). The user's Koban balance is reset to 0 and all inventory items are deleted.
