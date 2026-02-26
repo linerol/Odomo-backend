@@ -300,6 +300,39 @@ export class OdomoService {
     return { success: true, newBalance: user.kobanBalance + amount };
   }
 
+  async setStats(userId: string, statsData: { hunger?: number; happiness?: number; hygiene?: number }): Promise<OdomoStatsDto> {
+    const odomo = await this.prisma.odomo.findUnique({
+      where: { userId },
+    });
+
+    if (!odomo) {
+      throw new NotFoundException('Odomo not found');
+    }
+
+    const updates: any = {
+      lastInteractionAt: new Date(), // Reset interaction time so stats don't immediately decay
+    };
+
+    if (statsData.hunger !== undefined) updates.hunger = statsData.hunger;
+    if (statsData.happiness !== undefined) updates.happiness = statsData.happiness;
+    if (statsData.hygiene !== undefined) updates.hygiene = statsData.hygiene;
+
+    // Optional: if all stats are brought up, naturally we might want to revive it,
+    // but a targeted revive is better left to items or a specific revive route.
+    // However, if we set hygiene/happiness/hunger > 0, we can revive it if it was dead to allow testing.
+    const stats = await this.getLiveStats(userId);
+    if (stats.isDead || stats.isSick) {
+      updates.lifeState = 'ALIVE';
+    }
+
+    await this.prisma.odomo.update({
+      where: { userId },
+      data: updates,
+    });
+
+    return this.getLiveStats(userId);
+  }
+
   async delete(userId: string): Promise<void> {
     const odomo = await this.prisma.odomo.findUnique({
       where: { userId },

@@ -5,6 +5,7 @@ import { InteractDto } from './dto/interact.dto.js';
 import { GetUser } from '../common/decorators/get-user.decorator.js';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { OdomoStatsDto } from './dto/odomo-stats.dto.js';
+import { SetStatsDto } from './dto/set-stats.dto.js';
 
 @ApiTags('Odomo')
 @ApiBearerAuth()
@@ -62,6 +63,17 @@ export class OdomoController {
     @Body('amount') amount: number,
   ) {
     return this.odomoService.addKobans(userId, amount);
+  }
+
+  @Post('stats/set')
+  @ApiOperation({ summary: 'Dev: explicitly set Odomo stats (hunger, happiness, hygiene)' })
+  @ApiResponse({ status: 200, description: 'Stats updated successfully.', type: OdomoStatsDto })
+  @ApiResponse({ status: 404, description: 'Odomo not found.' })
+  async setStats(
+    @GetUser('id') userId: string,
+    @Body() setStatsDto: SetStatsDto,
+  ) {
+    return this.odomoService.setStats(userId, setStatsDto);
   }
 
   @Post('reset')
